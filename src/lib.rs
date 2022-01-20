@@ -14,6 +14,7 @@ pub struct Config {
 
 impl Config {
     pub fn new(args: &[String]) -> Result<Config, &str> {
+        //TODO: use proper library for parsing
         if args.len() < 4 {
             return Err("Not enough arguments.");
         }
