@@ -1,3 +1,10 @@
+
+pub fn run(config: Config) {
+    println!("{:#?}", config);
+}
+
+
+
 #[derive(Debug)]
 pub struct Config {
     pub secret: String,  // The secret which will be split

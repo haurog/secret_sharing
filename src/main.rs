@@ -12,6 +12,5 @@ fn main() {
         process::exit(1);
     });
 
-    println!("Configuration: {:#?}", config);
-
+    secret_sharing::run(config);
 }
