@@ -12,8 +12,8 @@ impl Config {
         }
 
         let secret = args[1].clone();
-        let shares = args[2].parse::<u64>().unwrap();  // TODO: handle error case properly here
-        let threshold = args[3].parse::<u64>().unwrap();  // TODO: handle error case properly here
+        let shares = args[2].clone().parse::<u64>().expect("Could not parse the second argument (wrong type).");
+        let threshold = args[3].parse::<u64>().expect("Could not parse the third argument (wrong type).");
 
         Ok(Config {
             secret,
