@@ -11,6 +11,7 @@ Here are a few things to think about:
 * Did you make sure that this program does not just send your seed phrase to an external server?
 * The usefulness of Shamir's secret sharing for securing seed phrases is [disputed](https://en.bitcoin.it/wiki/Shamir_Secret_Snakeoil) and introduces [additional attack vectors](https://blog.keys.casa/shamirs-secret-sharing-security-shortcomings/).
 * Initially the implementation will use integer arithmetics instead of using finite fields. So each piece of the secret an attacker gets will leak a small amount of information about the secret itself. An attacker can therefore start to guess the secret before they have the last piece needed.
+* The pseudo random number generator used her is not cryptographically secure.
 
 If you are still here, you can run the program with
 ```
