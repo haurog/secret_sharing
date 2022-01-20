@@ -3,21 +3,14 @@ use rand::Rng;
 
 pub fn run(config: Config) {
     println!("{:#?}", config);
-    generate_polygon(&config);
+    generate_polygon_coefficients(&config);
 }
 
-fn generate_polygon(config: &Config) -> Vec<i64> {
-    let mut rng = rand::thread_rng();
-    let random_number: i64 = rng.gen_range(-1_000_000..1_000_000);
-
-    println!("Random number {}", random_number);
-
+fn generate_polygon_coefficients(config: &Config) -> Vec<i64> {
     let mut rng = rand::thread_rng();
     let range = Uniform::new(-1_000_000, 1_000_000);
 
-    let coefficients: Vec<i64> = (0..config.threshold)
-        .map(|_| rng.sample(&range))
-        .collect();
+    let coefficients: Vec<i64> = (0..config.threshold).map(|_| rng.sample(&range)).collect();
 
     println!("coefficients: {:#?}", coefficients);
 
@@ -74,7 +67,7 @@ mod tests {
             shares: 6,
             threshold: 4,
         };
-        let coefficients = generate_polygon(&config);
+        let coefficients = generate_polygon_coefficients(&config);
         assert_eq!(
             coefficients.len() as u64,
             config.threshold + 1,
