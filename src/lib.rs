@@ -63,7 +63,7 @@ impl Config {
             .expect("Could not parse the third argument needs to be positive integer).");
 
         assert!(
-            threshold < shares,
+            threshold <= shares,
             "Threshold needs to be smaller or equal to the numbers of generated shares"
         );
 
