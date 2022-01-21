@@ -24,15 +24,20 @@ fn generate_polygon_coefficients(config: &Config) -> Vec<i64> {
 fn generate_shares(config: &Config, coefficients: &Vec<i64>) -> Vec<(u64, i64)>{
     let mut points: Vec<(u64, i64)> = Vec::new();
 
-    for i in 1..config.shares+1 {
-        let y = evaluate_polygon(i, &coefficients);
+    for i  in 1..config.shares+1 {
+        let y = evaluate_polygon(i as i64, &coefficients);
         points.push((i,y));
     }
     points
 }
 
-fn evaluate_polygon(x: u64, coefficients: &Vec<i64>) -> i64{
-    5
+fn evaluate_polygon(x: i64, coefficients: &Vec<i64>) -> i64{
+    let mut y: i64 = 0;  // The y value of the polygon evaluated at x
+    for (i,coef) in coefficients.iter().enumerate() {
+        y += coef*x.pow(i as u32);
+    }
+
+    y
 }
 
 
