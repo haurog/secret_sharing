@@ -1,21 +1,40 @@
+use std::vec;
+
 use rand::distributions::Uniform;
 use rand::Rng;
 
 pub fn run(config: Config) {
     println!("{:#?}", config);
-    generate_polygon_coefficients(&config);
+    let coefficients = generate_polygon_coefficients(&config);
+    let shares = generate_shares(&config, &coefficients);
+    println!("shares: {:?}", shares)
 }
 
 fn generate_polygon_coefficients(config: &Config) -> Vec<i64> {
     let mut rng = rand::thread_rng();
-    let range = Uniform::new(-1_000_000, 1_000_000);
+    let range = Uniform::new(-1_000_000_000, 1_000_000_000);
 
     let coefficients: Vec<i64> = (0..config.threshold).map(|_| rng.sample(&range)).collect();
 
-    println!("coefficients: {:#?}", coefficients);
+    println!("coefficients: {:?}", coefficients);
 
     [vec![config.secret], coefficients].concat()
 }
+
+fn generate_shares(config: &Config, coefficients: &Vec<i64>) -> Vec<(u64, i64)>{
+    let mut points: Vec<(u64, i64)> = Vec::new();
+
+    for i in (1..config.shares+1) {
+        let y = evaluate_polygon(i, &coefficients);
+        points.push((i,y));
+    }
+    points
+}
+
+fn evaluate_polygon(x: u64, coefficients: &Vec<i64>) -> i64{
+    5
+}
+
 
 #[derive(Debug)]
 pub struct Config {
