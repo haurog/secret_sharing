@@ -24,7 +24,7 @@ fn generate_polygon_coefficients(config: &Config) -> Vec<i64> {
 fn generate_shares(config: &Config, coefficients: &Vec<i64>) -> Vec<(u64, i64)>{
     let mut points: Vec<(u64, i64)> = Vec::new();
 
-    for i in (1..config.shares+1) {
+    for i in 1..config.shares+1 {
         let y = evaluate_polygon(i, &coefficients);
         points.push((i,y));
     }
