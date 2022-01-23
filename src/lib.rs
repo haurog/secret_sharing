@@ -95,7 +95,22 @@ mod tests {
         assert_eq!(
             coefficients.len() as u64,
             config.threshold + 1,
-            "Vector of coefficients has the wrong length"
+            "Vector of coefficients has the wrong length."
+        );
+    }
+    #[test]
+    fn number_of_generated_shares() {
+        let config = Config {
+            secret: 123456789,
+            shares: 6,
+            threshold: 4,
+        };
+        let coefficients = generate_polygon_coefficients(&config);
+        let shares = generate_shares(&config, &coefficients);
+        assert_eq!(
+            shares.len() as u64,
+            config.shares,
+            "wrong number of shares generated."
         );
     }
 }
