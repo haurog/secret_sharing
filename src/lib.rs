@@ -1,9 +1,13 @@
 use std::vec;
-
 use rand::distributions::Uniform;
 use rand::Rng;
 
+
+const BASE:i128 = 2;
+const MERSENNE_PRIME:i128 = BASE.pow(107)-1;  // TODO: use a larger Mersenne prime (61, 89, 107, 127, 521, 607, 1279, 2203)
+
 pub fn run(config: Config) {
+    println!("Mersenne prime: {}", MERSENNE_PRIME);
     println!("{:#?}", config);
     let coefficients = generate_polygon_coefficients(&config);
     let shares = generate_shares(&config, &coefficients);
