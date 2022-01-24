@@ -14,6 +14,10 @@ Here are a few things to think about:
 * Initially the implementation will use integer arithmetics instead of using finite fields. So each piece of the secret an attacker gets will leak a small amount of information about the secret itself. An attacker can therefore start to guess the secret before they have the last piece needed.
 * The pseudo random number generator used her is not cryptographically secure.
 
+And to add an additional warning, here is a quote by Gregory Maxwell:
+
+> "I think Shamir's Secret Sharing (and a number of other things, RNGs for example), suffer from a property where they are just complex enough that people are excited to implement them often for little good reason, and then they are complex enough (or have few enough reasons to invest significant time) they implement them poorly." 
+
 If you are still here, you can run the program with
 ```
 cargo run
