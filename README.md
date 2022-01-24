@@ -1,6 +1,6 @@
 # Shamir's Secret Sharing
 
-This is an implementation of [Shamir's Secret Sharing](https://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) in Rust. The idea is to be able to split up a [BIP-39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) based seed phrase into segments from which the seed phrase can be reconstructed if one has access to a predefined number of segments.
+This is an implementation of [Shamir's Secret Sharing](http://courses.csail.mit.edu/6.857/2015/files/L08-Shamir-HotToShareASecret.pdf) in Rust ([wiki](https://en.wikipedia.org/wiki/Shamir's_Secret_Sharing)). The idea is to be able to split up a [BIP-39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) based seed phrase into segments from which the seed phrase can be reconstructed if one has access to a predefined number of segments.
 
 
 ## Should you use it
