@@ -4,9 +4,9 @@ use std::vec;
 
 const MERSENNE_PRIME: i128 = 2i128.pow(107) - 1; // used during development until bigints are used (afterwards use the recommended prime for secp256k1 below)
 
-// The following prime number is the recommended one for secp256k1 ECDSA: http://www.secg.org/sec2-v2.pdf
-const BASE: i128 = 2;
-const FIELD_PRIME: i128 = BASE.pow(256) - BASE.pow(32) - 977;
+// The following prime number is the recommended one for secp256k1 ECDSA: http://www.secg.org/sec2-v2.pdf. Here we use a finite field of the same size.
+// const BASE: i128 = 2;
+// const FIELD_PRIME: i128 = BASE.pow(256) - BASE.pow(32) - 977;
 
 pub fn run(config: Config) {
     println!("Mersenne prime: {}", MERSENNE_PRIME);
