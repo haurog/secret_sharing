@@ -1,9 +1,20 @@
-use std::vec;
 use rand::distributions::Uniform;
 use rand::Rng;
+use std::vec;
+
+const MERSENNE_PRIME: i128 = 2i128.pow(107) - 1; // used during development until bigints are used (afterwards use the recommended prime for secp256k1 below)
 
 
-const MERSENNE_PRIME:i128 = 2i128.pow(107)-1;  // TODO: use a larger Mersenne prime (61, 89, 107, 127, 521, 607, 1279, 2203)
+// The following prime number is the recommended one for secp256k1 ECDSA: http://www.secg.org/sec2-v2.pdf
+// const BASE: i128 = 2;
+// const FIELD_PRIME: i128 = BASE.pow(256)
+//     - BASE.pow(32)
+//     - BASE.pow(9)
+//     - BASE.pow(8)
+//     - BASE.pow(7)
+//     - BASE.pow(6)
+//     - BASE.pow(4)
+//     - 1;
 
 pub fn run(config: Config) {
     println!("Mersenne prime: {}", MERSENNE_PRIME);
@@ -24,25 +35,24 @@ fn generate_polygon_coefficients(config: &Config) -> Vec<i64> {
     [vec![config.secret], coefficients].concat()
 }
 
-fn generate_shares(config: &Config, coefficients: &Vec<i64>) -> Vec<(u64, i64)>{
+fn generate_shares(config: &Config, coefficients: &Vec<i64>) -> Vec<(u64, i64)> {
     let mut points: Vec<(u64, i64)> = Vec::new();
 
-    for i  in 1..config.shares+1 {
+    for i in 1..config.shares + 1 {
         let y = evaluate_polygon(i as i64, &coefficients);
-        points.push((i,y));
+        points.push((i, y));
     }
     points
 }
 
-fn evaluate_polygon(x: i64, coefficients: &Vec<i64>) -> i64{
-    let mut y: i64 = 0;  // The y value of the polygon evaluated at x
-    for (i,coef) in coefficients.iter().enumerate() {
-        y += coef*x.pow(i as u32);
+fn evaluate_polygon(x: i64, coefficients: &Vec<i64>) -> i64 {
+    let mut y: i64 = 0; // The y value of the polygon evaluated at x
+    for (i, coef) in coefficients.iter().enumerate() {
+        y += coef * x.pow(i as u32);
     }
 
     y
 }
-
 
 #[derive(Debug)]
 pub struct Config {
