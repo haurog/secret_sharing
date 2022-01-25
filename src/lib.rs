@@ -13,7 +13,13 @@ pub fn run(config: Config) {
     println!("{:#?}", config);
     let coefficients = generate_polygon_coefficients(&config);
     let shares = generate_shares(&config, &coefficients);
-    println!("shares: {:?}", shares)
+    println!("shares: {:?}", shares);
+    let recovered_secret = recover_secret(&shares);
+    println!("{}", recovered_secret);
+    println!(
+        "recovered secret is the same as the original: {}",
+        recovered_secret == config.secret
+    );
 }
 
 fn generate_polygon_coefficients(config: &Config) -> Vec<i128> {
@@ -27,12 +33,12 @@ fn generate_polygon_coefficients(config: &Config) -> Vec<i128> {
     [vec![config.secret], coefficients].concat()
 }
 
-fn generate_shares(config: &Config, coefficients: &Vec<i128>) -> Vec<(i128, i128)> {
-    let mut points: Vec<(i128, i128)> = Vec::new();
+fn generate_shares(config: &Config, coefficients: &Vec<i128>) -> Vec<Share> {
+    let mut points: Vec<Share> = Vec::new();
 
     for i in 1..config.shares + 1 {
         let y = evaluate_polygon(i as i128, &coefficients);
-        points.push((i as i128, y));
+        points.push(Share { x: i as i128, y: y });
     }
     points
 }
@@ -46,12 +52,39 @@ fn evaluate_polygon(x: i128, coefficients: &Vec<i128>) -> i128 {
     y
 }
 
+fn recover_secret(shares: &Vec<Share>) -> i128 {
+    // Here, the efficient algorithm described in https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing#Computationally_efficient_approach is used
+
+    let mut secret = 0;
+
+    for (i, share_i) in shares.iter().enumerate() {
+        let mut num = share_i.y; // numerator of the fraction
+        let mut den = 1; // denominator of the fraction
+        for (j, share_j )in shares.iter().enumerate() {
+            if i != j {
+                num *= share_j.x;
+                den *= share_j.x-share_i.x;
+            }
+        }
+        secret += num/den;
+    }
+
+    secret
+}
+
 #[derive(Debug)]
 pub struct Config {
-    pub secret: i128,    // The secret which will be split
+    pub secret: i128,   // The secret which will be split
     pub shares: u32,    // Number of pieces the secret will be split into
     pub threshold: u32, // number of pieces needed to reconstruct the secret
 }
+
+#[derive(Debug)]
+struct Share {
+    x:i128,
+    y:i128,
+}
+
 
 impl Config {
     pub fn new(args: &[String]) -> Result<Config, &str> {
