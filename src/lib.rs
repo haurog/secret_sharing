@@ -2,10 +2,10 @@ use rand::distributions::Uniform;
 use rand::Rng;
 use std::vec;
 
-const MERSENNE_PRIME: i128 = 2i128.pow(107) - 1; // used during development until bigints are used (afterwards use the recommended prime for secp256k1 below)
+const BASE: i128 = 2;
+const MERSENNE_PRIME: i128 = BASE.pow(107) - 1; // used during development until bigints are used (afterwards use the recommended prime for secp256k1 below)
 
 // The following prime number is the recommended one for secp256k1 ECDSA: http://www.secg.org/sec2-v2.pdf. Here we use a finite field of the same size.
-// const BASE: i128 = 2;
 // const FIELD_PRIME: i128 = BASE.pow(256) - BASE.pow(32) - 977;
 
 pub fn run(config: Config) {
@@ -16,29 +16,29 @@ pub fn run(config: Config) {
     println!("shares: {:?}", shares)
 }
 
-fn generate_polygon_coefficients(config: &Config) -> Vec<i64> {
+fn generate_polygon_coefficients(config: &Config) -> Vec<i128> {
     let mut rng = rand::thread_rng();
     let range = Uniform::new(-1_000_000_000, 1_000_000_000);
 
-    let coefficients: Vec<i64> = (0..config.threshold).map(|_| rng.sample(&range)).collect();
+    let coefficients: Vec<i128> = (0..config.threshold).map(|_| rng.sample(&range)).collect();
 
     println!("coefficients: {:?}", coefficients);
 
     [vec![config.secret], coefficients].concat()
 }
 
-fn generate_shares(config: &Config, coefficients: &Vec<i64>) -> Vec<(u64, i64)> {
-    let mut points: Vec<(u64, i64)> = Vec::new();
+fn generate_shares(config: &Config, coefficients: &Vec<i128>) -> Vec<(i128, i128)> {
+    let mut points: Vec<(i128, i128)> = Vec::new();
 
     for i in 1..config.shares + 1 {
-        let y = evaluate_polygon(i as i64, &coefficients);
-        points.push((i, y));
+        let y = evaluate_polygon(i as i128, &coefficients);
+        points.push((i as i128, y));
     }
     points
 }
 
-fn evaluate_polygon(x: i64, coefficients: &Vec<i64>) -> i64 {
-    let mut y: i64 = 0; // The y value of the polygon evaluated at x
+fn evaluate_polygon(x: i128, coefficients: &Vec<i128>) -> i128 {
+    let mut y: i128 = 0; // The y value of the polygon evaluated at x
     for (i, coef) in coefficients.iter().enumerate() {
         y += coef * x.pow(i as u32);
     }
@@ -48,9 +48,9 @@ fn evaluate_polygon(x: i64, coefficients: &Vec<i64>) -> i64 {
 
 #[derive(Debug)]
 pub struct Config {
-    pub secret: i64,    // The secret which will be split
-    pub shares: u64,    // Number of pieces the secret will be split into
-    pub threshold: u64, // number of pieces needed to reconstruct the secret
+    pub secret: i128,    // The secret which will be split
+    pub shares: u32,    // Number of pieces the secret will be split into
+    pub threshold: u32, // number of pieces needed to reconstruct the secret
 }
 
 impl Config {
@@ -62,14 +62,14 @@ impl Config {
 
         let secret = args[1]
             .clone()
-            .parse::<i64>()
+            .parse::<i128>()
             .expect("Could not parse the first argument (needs to be integer).");
         let shares = args[2]
             .clone()
-            .parse::<u64>()
+            .parse::<u32>()
             .expect("Could not parse the second argument (needs to be positive integer).");
         let threshold = args[3]
-            .parse::<u64>()
+            .parse::<u32>()
             .expect("Could not parse the third argument needs to be positive integer).");
 
         assert!(
@@ -98,7 +98,7 @@ mod tests {
         };
         let coefficients = generate_polygon_coefficients(&config);
         assert_eq!(
-            coefficients.len() as u64,
+            coefficients.len() as u32,
             config.threshold + 1,
             "Vector of coefficients has the wrong length."
         );
@@ -113,7 +113,7 @@ mod tests {
         let coefficients = generate_polygon_coefficients(&config);
         let shares = generate_shares(&config, &coefficients);
         assert_eq!(
-            shares.len() as u64,
+            shares.len() as u32,
             config.shares,
             "wrong number of shares generated."
         );
