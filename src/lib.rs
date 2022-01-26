@@ -3,13 +3,13 @@ use rand::Rng;
 use std::vec;
 
 const BASE: i128 = 2;
-const MERSENNE_PRIME: i128 = BASE.pow(107) - 1; // used during development until bigints are used (afterwards use the recommended prime for secp256k1 below)
+const FIELD_PRIME: i128 = BASE.pow(19) - 1; // used during development until bigints are used (afterwards use the recommended prime for secp256k1 below)
 
 // The following prime number is the recommended one for secp256k1 ECDSA: http://www.secg.org/sec2-v2.pdf. Here we use a finite field of the same size.
 // const FIELD_PRIME: i128 = BASE.pow(256) - BASE.pow(32) - 977;
 
 pub fn run(config: Config) {
-    println!("Mersenne prime: {}", MERSENNE_PRIME);
+    println!("Field prime: {}", FIELD_PRIME);
     println!("{:#?}", config);
     let coefficients = generate_polygon_coefficients(&config);
     let shares = generate_shares(&config, &coefficients);
@@ -24,7 +24,7 @@ pub fn run(config: Config) {
 
 fn generate_polygon_coefficients(config: &Config) -> Vec<i128> {
     let mut rng = rand::thread_rng();
-    let range = Uniform::new(-1_000_000_000, 1_000_000_000);
+    let range = Uniform::new(0, FIELD_PRIME);
 
     let coefficients: Vec<i128> = (0..config.threshold).map(|_| rng.sample(&range)).collect();
 
@@ -36,9 +36,11 @@ fn generate_polygon_coefficients(config: &Config) -> Vec<i128> {
 fn generate_shares(config: &Config, coefficients: &Vec<i128>) -> Vec<Share> {
     let mut points: Vec<Share> = Vec::new();
 
-    for i in 1..config.shares + 1 {
-        let y = evaluate_polygon(i as i128, &coefficients);
-        points.push(Share { x: i as i128, y: y });
+    for _i in 0..config.shares {
+        let x = rand::thread_rng().gen_range(0..FIELD_PRIME);
+        let y = evaluate_polygon(x, &coefficients);
+        let y = y.rem_euclid(FIELD_PRIME);
+        points.push(Share { x: x, y: y });
     }
     points
 }
